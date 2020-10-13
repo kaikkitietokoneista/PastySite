@@ -1,0 +1,17 @@
+{
+  "name": "pastysite",
+  "version": "1.0.0",
+  "description": "A free open source Pastebin site.",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon ."
+  },
+  "keywords": [
+    "Pastebin",
+    "kaikkitietokoneista",
+    "Pasty",
+    "Pastysite"
+  ],
+  "author": "Kaikkitietokoneista",
+  "license": "ISC"
+}
