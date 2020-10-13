@@ -2,10 +2,12 @@ const sqlite3 = require('sqlite3').verbose()
 const express = require('express')
 const ejs = require('ejs')
 
+require('dotenv').config()
+
 const app = express()
 const db = new sqlite3.Database(':memory:')
 
-const port = 8080
+const port = process.env.PORT
 
 app.set('view engine', 'ejs');
 
