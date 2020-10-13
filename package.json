@@ -1,7 +1,7 @@
 {
   "name": "pastysite",
   "version": "1.0.0",
-  "description": "A free open source Pastebin site.",
+  "description": "Ilmainen, herkullinen ja avoimen lähdekoodin Pastebin.",
   "main": "app.js",
   "scripts": {
     "test": "nodemon ."
