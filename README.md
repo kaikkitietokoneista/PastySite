@@ -20,10 +20,12 @@ Asenna tarvittavat paketit.
 npm install
 ```
 
-Luo vaadittu `.env`-tiedosto. Siinä sinun tarvitsee vain määritellä portti. Esimerkki:
+Luo vaadittu `.env`-tiedosto. Siinä sinun tarvitsee vain määritellä portti, sivuston avain ja sivuston salainen recaptchaa varten. Esimerkki:
 
 ```env
 PORT=8080
+SITE_KEY=iosadoiaosid90329031
+SECRET_KEY=iosadoiaosid90329031
 ```
 
 Käynnistä ohjelma.

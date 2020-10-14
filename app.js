@@ -1,9 +1,12 @@
 const sqlite3 = require('sqlite3').verbose()
 const express = require('express')
 const ejs = require('ejs')
+const Recaptcha = require('express-recaptcha').RecaptchaV3;
 
 require('dotenv').config()
 
+
+const recaptcha = new Recaptcha(process.env.SITE_KEY, process.env.SECRET_KEY, {callback:'cb', hl: 'fi'});
 const app = express()
 const db = new sqlite3.Database(':memory:')
 
@@ -28,23 +31,40 @@ db.run(`CREATE TABLE IF NOT EXISTS pastes (
     console.log(row.id + ": " + row.info);
 });*/
 
-app.get('/', function(req, res) {
-  res.render('index')
+app.get('/', recaptcha.middleware.render, function(req, res) {
+  res.render('index', {
+    captcha: res.recaptcha
+  })
 })
 
-app.post('/uusi', function(req, res) {
-  db.get(`SELECT name, paste FROM pastes WHERE name = ?`, [req.body.nimi], (err, row) => {
-    if (row) {
+app.post('/uusi', recaptcha.middleware.verify, function(req, res) {
+  console.log(req.recaptcha.error);
+  recaptcha.verify(req, function(error, data){
+    if (!req.recaptcha.error) {
+      // success code
+      db.get(`SELECT name, paste FROM pastes WHERE name = ?`, [req.body.nimi], (err, row) => {
+        if (row) {
+          res.render('index', {
+            nimi: req.body.nimi,
+            teksti: req.body.teksti,
+            ilmoitus: 'Valitse uusi nimi',
+            captcha: res.recaptcha
+          })
+        } else {
+          db.run(`INSERT INTO pastes (name, paste) VALUES (?, ?);`, [req.body.nimi, req.body.teksti], function(err) {
+            if (err) throw err
+          });
+          res.redirect(`/pastyt/${req.body.nimi}`)
+        }
+      })
+    } else {
+      // error code
       res.render('index', {
         nimi: req.body.nimi,
         teksti: req.body.teksti,
-        ilmoitus: 'Valitse uusi nimi'
+        ilmoitus: 'Epäonnistuit Captchan.',
+        captcha: res.recaptcha
       })
-    } else {
-      db.run(`INSERT INTO pastes (name, paste) VALUES (?, ?);`, [req.body.nimi, req.body.teksti], function(err) {
-        if (err) throw err
-      });
-      res.redirect(`/pastyt/${req.body.nimi}`)
     }
   })
 })
